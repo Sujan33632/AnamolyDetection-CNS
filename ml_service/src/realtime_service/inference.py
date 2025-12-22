@@ -12,6 +12,7 @@ IMPORTANT:
 
 from __future__ import annotations
 
+import os
 import pickle
 from typing import Dict, Mapping, Union
 
@@ -32,16 +33,19 @@ AE_WEIGHT = 0.7
 IFOREST_WEIGHT = 0.3
 
 # ❗ REPLACE this with the exact value from notebook (p = 80)
-REALTIME_SCORE_THRESHOLD = 0.92   # <-- example ONLY
+REALTIME_SCORE_THRESHOLD = 0.92  # <-- example ONLY
 
 
 # -------------------------------------------------------------------
-# Artifact paths
+# Artifact paths (Absolute paths based on file location)
 # -------------------------------------------------------------------
 
-PREPROCESSOR_PKL = "src/preprocessing/preprocessor.pkl"
-AUTOENCODER_PATH = "src/models/autoencoder_v2.keras"
-IFOREST_PKL = "src/models/iforest_v2.pkl"
+_CURRENT_DIR = os.path.dirname(__file__)
+_SRC_DIR = os.path.dirname(_CURRENT_DIR)  # Goes up to src/
+
+PREPROCESSOR_PKL = os.path.join(_SRC_DIR, "preprocessing", "preprocessor.pkl")
+AUTOENCODER_PATH = os.path.join(_SRC_DIR, "models", "autoencoder_v2.keras")
+IFOREST_PKL = os.path.join(_SRC_DIR, "models", "iforest_v2.pkl")
 
 
 # -------------------------------------------------------------------
@@ -61,9 +65,7 @@ def _load_artifacts():
             _PREPROCESSOR = pickle.load(f)
 
     if _AUTOENCODER is None:
-        _AUTOENCODER = tf.keras.models.load_model(
-            AUTOENCODER_PATH, compile=False
-        )
+        _AUTOENCODER = tf.keras.models.load_model(AUTOENCODER_PATH, compile=False)
 
     if _IFOREST is None:
         with open(IFOREST_PKL, "rb") as f:
@@ -71,7 +73,7 @@ def _load_artifacts():
 
 
 def _to_dataframe(
-    flow: Union[Mapping[str, object], pd.Series, pd.DataFrame]
+    flow: Union[Mapping[str, object], pd.Series, pd.DataFrame],
 ) -> pd.DataFrame:
     """Convert a single flow to a one-row DataFrame."""
     if isinstance(flow, pd.DataFrame):
@@ -110,7 +112,6 @@ def _preprocess(df: pd.DataFrame) -> tuple[np.ndarray, np.ndarray]:
     return X_full, X_numeric
 
 
-
 def _compute_scores(X_full: np.ndarray, X_numeric: np.ndarray) -> Dict[str, float]:
     """
     Compute per-model anomaly scores.
@@ -128,17 +129,13 @@ def _compute_scores(X_full: np.ndarray, X_numeric: np.ndarray) -> Dict[str, floa
     return {"ae": ae_score, "iforest": if_score}
 
 
-
 def _combine_scores(scores: Mapping[str, float]) -> float:
     """Weighted ensemble score."""
-    return (
-        AE_WEIGHT * scores["ae"]
-        + IFOREST_WEIGHT * scores["iforest"]
-    )
+    return AE_WEIGHT * scores["ae"] + IFOREST_WEIGHT * scores["iforest"]
 
 
 def score_flow(
-    flow: Union[Mapping[str, object], pd.Series, pd.DataFrame]
+    flow: Union[Mapping[str, object], pd.Series, pd.DataFrame],
 ) -> Dict[str, object]:
     """
     Score a single network flow.
