@@ -1,24 +1,38 @@
 @import "tailwindcss";
 
 :root {
-  --bg: #0b1220;
-  --card: #1e293b; /* Slightly lighter than bg for contrast */
-  --card-hover: #334155;
-  --primary-start: #7c3aed;
-  --primary-end: #06b6d4;
-  --accent: #f97316;
-  --muted: #94a3b8;
-  --text-main: #f8fafc;
-  --text-secondary: #cbd5e1;
+  /* Core theme palette (Production technical UI) */
+  --bg: #0B1220; /* App Background */
+  --card: #0F1724; /* Card / Surface */
+  --secondary-surface: #1B2430; /* Secondary Surface / Borders */
+
+  --primary: #0EA5A4; /* Primary Accent */
+  --primary-hover: #089A98; /* Primary Hover */
+
+  /* Back-compat for existing gradient utility usage */
+  --primary-start: var(--primary);
+  --primary-end: var(--primary-hover);
+
+  --warning: #F59E0B; /* Warning / Highlight */
+  --success: #10B981; /* Success */
+  --error: #EF4444; /* Error */
+
+  --text-main: #E6EEF2; /* Primary Text */
+  --text-secondary: #9AA6B2; /* Muted Text */
+
+  --overlay: rgba(255, 255, 255, 0.03); /* Overlay / Glass */
 }
 
 @theme {
   --color-bg: var(--bg);
   --color-card: var(--card);
-  --color-primary-start: var(--primary-start);
-  --color-primary-end: var(--primary-end);
-  --color-accent: var(--accent);
-  --color-muted: var(--muted);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-warning: var(--warning);
+  --color-success: var(--success);
+  --color-error: var(--error);
+  --color-text: var(--text-main);
+  --color-muted: var(--text-secondary);
 
   --animate-fade: fade 0.3s ease-in-out;
 
@@ -43,17 +57,145 @@ body {
 
 /* Utilities */
 .btn-primary {
-  @apply bg-gradient-to-r from-[var(--primary-start)] to-[var(--primary-end)] text-white font-semibold rounded-lg shadow-lg px-4 py-2 transition-all duration-200 transform hover:-translate-y-0.5 hover:shadow-xl focus:ring-2 focus:ring-cyan-400 focus:outline-none;
+  /* Solid primary button with accessible hover/focus states */
+  @apply text-white font-semibold rounded-lg shadow-lg px-4 py-2 transition-colors duration-200 focus:outline-none;
+  background-color: var(--primary);
+}
+.btn-primary:hover {
+  background-color: var(--primary-hover);
+}
+.btn-primary:focus {
+  outline: 2px solid color-mix(in srgb, var(--primary) 40%, transparent);
+  outline-offset: 2px;
 }
 
 .btn-secondary {
-  @apply border border-[var(--muted)] text-[var(--text-secondary)] font-medium rounded-lg px-4 py-2 hover:bg-white/5 transition-all duration-200;
+  @apply font-medium rounded-lg px-4 py-2 transition-colors duration-200;
+  color: var(--text-secondary);
+  border: 1px solid var(--secondary-surface);
+  background-color: transparent;
+}
+.btn-secondary:hover {
+  background-color: var(--overlay);
 }
 
 .card {
-  @apply bg-[var(--card)] rounded-xl shadow-lg border border-white/5 p-6 transition-all duration-200 hover:border-white/10;
+  @apply rounded-xl shadow-lg p-6 transition-colors duration-200;
+  background-color: var(--card);
+  border: 1px solid var(--secondary-surface);
 }
 
+/* Text helpers */
 .text-gradient {
-  @apply bg-clip-text text-transparent bg-gradient-to-r from-[var(--primary-start)] to-[var(--primary-end)];
+  color: var(--text-main);
 }
+
+/* Tailwind color utility overrides mapped to theme variables (color-only) */
+/* Text colors */
+.text-white { color: var(--text-main) !important; }
+.text-gray-300 { color: var(--text-main) !important; }
+.text-gray-400 { color: var(--text-secondary) !important; }
+.text-gray-500 { color: var(--text-secondary) !important; }
+.text-gray-200 { color: var(--text-main) !important; }
+.text-indigo-400 { color: var(--primary) !important; }
+.text-emerald-400 { color: var(--success) !important; }
+.text-red-400 { color: var(--error) !important; }
+
+/* Background colors */
+.bg-gray-800 { background-color: var(--card) !important; }
+.bg-gray-900 { background-color: var(--bg) !important; }
+.bg-gray-800\/20 { background-color: color-mix(in srgb, var(--card) 20%, transparent) !important; }
+.bg-gray-800\/30 { background-color: color-mix(in srgb, var(--card) 30%, transparent) !important; }
+.bg-gray-800\/50 { background-color: color-mix(in srgb, var(--card) 50%, transparent) !important; }
+.bg-gray-900\/50 { background-color: color-mix(in srgb, var(--bg) 50%, transparent) !important; }
+.bg-white\/5 { background-color: var(--overlay) !important; }
+
+/* Primary accent backgrounds */
+.bg-indigo-600 { background-color: var(--primary) !important; }
+.bg-indigo-600\/20 { background-color: color-mix(in srgb, var(--primary) 20%, transparent) !important; }
+.bg-indigo-500 { background-color: var(--primary) !important; }
+
+/* Status backgrounds */
+.bg-red-500\/10 { background-color: color-mix(in srgb, var(--error) 10%, transparent) !important; }
+.bg-emerald-500\/10 { background-color: color-mix(in srgb, var(--success) 10%, transparent) !important; }
+.bg-red-900\/10 { background-color: color-mix(in srgb, var(--error) 10%, transparent) !important; }
+.bg-emerald-900\/10 { background-color: color-mix(in srgb, var(--success) 10%, transparent) !important; }
+
+/* Border colors */
+.border-gray-700 { border-color: var(--secondary-surface) !important; }
+.border-gray-700\/50 { border-color: color-mix(in srgb, var(--secondary-surface) 50%, transparent) !important; }
+.border-gray-800 { border-color: var(--secondary-surface) !important; }
+.border-indigo-500 { border-color: var(--primary) !important; }
+.border-red-500\/20 { border-color: color-mix(in srgb, var(--error) 20%, transparent) !important; }
+.border-emerald-500\/20 { border-color: color-mix(in srgb, var(--success) 20%, transparent) !important; }
+.border-red-900\/30 { border-color: color-mix(in srgb, var(--error) 30%, transparent) !important; }
+.border-emerald-900\/30 { border-color: color-mix(in srgb, var(--success) 30%, transparent) !important; }
+
+/* Ring / focus */
+.focus\:ring-2:focus { outline: 2px solid color-mix(in srgb, var(--primary) 40%, transparent); outline-offset: 2px; }
+
+/* Hover helpers */
+.hover\:bg-gray-700:hover { background-color: var(--secondary-surface) !important; }
+.hover\:bg-gray-750:hover { background-color: var(--secondary-surface) !important; }
+.hover\:text-indigo-300:hover { color: color-mix(in srgb, var(--primary) 80%, white 20%) !important; }
+
+/* Additional mappings for classes used in components */
+.text-green-400 { color: var(--success) !important; }
+.bg-green-500\/10 { background-color: color-mix(in srgb, var(--success) 10%, transparent) !important; }
+.border-green-500\/20 { border-color: color-mix(in srgb, var(--success) 20%, transparent) !important; }
+.bg-green-400 { background-color: var(--success) !important; }
+
+.text-red-300 { color: color-mix(in srgb, var(--error) 80%, white 20%) !important; }
+.hover\:text-red-300:hover { color: color-mix(in srgb, var(--error) 80%, white 20%) !important; }
+
+/* Indigo gradient/background fallbacks to primary */
+.bg-indigo-900\/10 { background-color: color-mix(in srgb, var(--primary) 10%, transparent) !important; }
+.border-indigo-500\/50 { border-color: color-mix(in srgb, var(--primary) 50%, transparent) !important; }
+.group-hover\:text-transparent:hover { color: transparent; }
+
+/* Gradient stop overrides for legacy gradient classes */
+.from-indigo-600 { --tw-gradient-from: var(--primary) !important; }
+.to-cyan-500 { --tw-gradient-to: var(--primary-hover) !important; }
+
+/* White overlay borders used across components */
+.border-white\/5 { border-color: color-mix(in srgb, var(--text-main) 5%, transparent) !important; }
+
+/* Additional neutral mappings */
+.bg-gray-700 { background-color: var(--secondary-surface) !important; }
+.bg-gray-900\/80 { background-color: color-mix(in srgb, var(--bg) 80%, transparent) !important; }
+.bg-white\/10 { background-color: color-mix(in srgb, var(--text-main) 10%, transparent) !important; }
+.border-gray-600 { border-color: var(--secondary-surface) !important; }
+
+/* Additional status mappings */
+.bg-red-900\/30 { background-color: color-mix(in srgb, var(--error) 30%, transparent) !important; }
+.bg-emerald-900\/30 { background-color: color-mix(in srgb, var(--success) 30%, transparent) !important; }
+.border-red-900\/50 { border-color: color-mix(in srgb, var(--error) 50%, transparent) !important; }
+
+/* Ring color mapping */
+.ring-indigo-500 { --tw-ring-color: var(--primary) !important; }
+
+/* Text variants */
+.text-indigo-300 { color: color-mix(in srgb, var(--primary) 80%, white 20%) !important; }
+
+/* Cyan mappings to primary */
+.text-cyan-400 { color: var(--primary) !important; }
+.bg-cyan-500 { background-color: var(--primary) !important; }
+.to-cyan-400 { --tw-gradient-to: var(--primary-hover) !important; }
+.to-cyan-500 { --tw-gradient-to: var(--primary-hover) !important; }
+.border-cyan-500 { border-color: var(--primary) !important; }
+
+/* Indigo gradient starts to primary */
+.from-indigo-400 { --tw-gradient-from: var(--primary) !important; }
+.from-indigo-600 { --tw-gradient-from: var(--primary) !important; }
+
+/* Warning (yellow/amber) mappings */
+.text-yellow-400 { color: var(--warning) !important; }
+.bg-yellow-500\/10 { background-color: color-mix(in srgb, var(--warning) 10%, transparent) !important; }
+.text-amber-400 { color: var(--warning) !important; }
+
+/* Hardcoded hex utility overrides to theme variables */
+.bg-\[\#0f111a\] { background-color: var(--bg) !important; }
+.bg-\[\#131620\] { background-color: var(--card) !important; }
+.bg-\[\#0a0c10\] { background-color: var(--card) !important; }
+.ring-offset-\[\#0f111a\] { --tw-ring-offset-color: var(--bg) !important; }
+

@@ -1,4 +1,5 @@
-import { X, AlertTriangle, CheckCircle, Activity, BarChart2 } from 'lucide-react';
+import { X, AlertTriangle, CheckCircle, Activity, BarChart2, Clock } from 'lucide-react';
+import { formatDuration } from '../utils/formatters';
 
 const ResultModal = ({ isOpen, onClose, data }) => {
   if (!isOpen || !data) return null;
@@ -89,6 +90,26 @@ const ResultModal = ({ isOpen, onClose, data }) => {
                         </div>
                      </div>
                 </div>
+
+                {/* Flow Details - include duration from CSV row if available */}
+                {(() => {
+                  const durationRaw = data?.dur ?? data?.sample?.dur ?? data?.raw?.dur;
+                  const durationFormatted = formatDuration(durationRaw);
+                  return (
+                    <div className="mt-2">
+                      <h3 className="text-lg font-medium text-gray-200 mb-4 flex items-center">
+                        <Clock className="w-5 h-5 mr-2 text-indigo-400"/>
+                        Flow Details
+                      </h3>
+                      <div className="bg-gray-800/50 rounded-xl p-4 border border-gray-700/50">
+                        <div className="flex items-center justify-between py-1">
+                          <span className="text-sm text-gray-400">Duration</span>
+                          <span className="text-sm font-semibold text-white font-mono">{durationFormatted}</span>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })()}
 
                 {/* Explanation */}
                 <div>
